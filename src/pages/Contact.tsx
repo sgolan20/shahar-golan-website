@@ -1,8 +1,69 @@
 
 import { Mail, Phone, Linkedin, Youtube } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import emailjs from "@emailjs/browser";
+import { useToast } from "@/components/ui/use-toast";
 
 const Contact = () => {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: ""
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const templateParams = {
+        to_email: "sgolan20@gmail.com",
+        from_name: formData.name,
+        from_email: formData.email,
+        phone: formData.phone,
+        message: formData.message
+      };
+
+      await emailjs.send(
+        "service_5axfe6b",  // Replace with your EmailJS service ID
+        "template_h5jvlqk",  // Replace with your EmailJS template ID
+        templateParams,
+        "Wpn1otnAan2lBpqBz"  // Replace with your EmailJS public key
+      );
+
+      toast({
+        title: "ההודעה נשלחה בהצלחה!",
+        description: "נחזור אליך בהקדם האפשרי",
+      });
+
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        message: ""
+      });
+    } catch (error) {
+      toast({
+        title: "שגיאה בשליחת ההודעה",
+        description: "אנא נסה שוב מאוחר יותר",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen pt-32 px-4 font-heebo">
       <div className="max-w-7xl mx-auto">
@@ -94,7 +155,7 @@ const Contact = () => {
             className="bg-white p-8 rounded-xl shadow-sm"
           >
             <h2 className="text-2xl font-bold mb-6">השאירו פרטים</h2>
-            <form className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                   שם מלא
@@ -103,6 +164,8 @@ const Contact = () => {
                   type="text"
                   id="name"
                   name="name"
+                  value={formData.name}
+                  onChange={handleChange}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                   required
                 />
@@ -116,6 +179,8 @@ const Contact = () => {
                   type="email"
                   id="email"
                   name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                   required
                 />
@@ -129,6 +194,8 @@ const Contact = () => {
                   type="tel"
                   id="phone"
                   name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                   required
                 />
@@ -141,6 +208,8 @@ const Contact = () => {
                 <textarea
                   id="message"
                   name="message"
+                  value={formData.message}
+                  onChange={handleChange}
                   rows={4}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                   required
@@ -149,9 +218,10 @@ const Contact = () => {
 
               <button
                 type="submit"
-                className="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-opacity-90 transition-colors"
+                disabled={isSubmitting}
+                className="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                שליחה
+                {isSubmitting ? "שולח..." : "שליחה"}
               </button>
             </form>
           </motion.div>
