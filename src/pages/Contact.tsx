@@ -36,10 +36,10 @@ const Contact = () => {
       };
 
       await emailjs.send(
-        "service_5axfe6b",  // Replace with your EmailJS service ID
-        "template_h5jvlqk",  // Replace with your EmailJS template ID
+        "service_fn6o8zk",  // Your EmailJS service ID
+        "template_l3ath0b",  // Your EmailJS template ID
         templateParams,
-        "Wpn1otnAan2lBpqBz"  // Replace with your EmailJS public key
+        "mKUv9eNVw-RsfbzNy"  // Your EmailJS public key
       );
 
       toast({
