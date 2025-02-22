@@ -45,20 +45,24 @@ const Blog = () => {
               animate={{ opacity: 1, y: 0 }}
               className="bg-white rounded-xl shadow-sm overflow-hidden"
             >
-              {post.image_url && (
-                <img
-                  src={post.image_url}
-                  alt={post.title}
-                  className="w-full h-48 object-cover"
-                />
-              )}
+              <div className="relative pb-[56.25%]">
+                {post.image_url && (
+                  <img
+                    src={post.image_url}
+                    alt={post.title}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                )}
+              </div>
               <div className="p-6">
                 <h2 className="text-xl font-bold mb-2">{post.title}</h2>
-                <p className="text-gray-600 mb-4">{post.description}</p>
+                {post.description && (
+                  <p className="text-gray-600 mb-4 whitespace-pre-line">{post.description}</p>
+                )}
                 {post.youtube_url && (
                   <Dialog>
                     <DialogTrigger asChild>
-                      <button className="text-blue-600 hover:text-blue-800">
+                      <button className="text-blue-600 hover:text-blue-800 font-medium">
                         צפה בסרטון
                       </button>
                     </DialogTrigger>
