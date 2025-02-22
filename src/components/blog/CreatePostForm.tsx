@@ -1,9 +1,9 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import type { BlogPost } from "@/services/blog.service";
 
 interface CreatePostFormProps {
@@ -55,23 +55,35 @@ export const CreatePostForm = ({ onSubmit, isLoading }: CreatePostFormProps) => 
           />
         </div>
         <div>
+          <Label className="block text-sm mb-2">
+            נתיב תמונה (לדוגמה: /images/my-image.png)
+            <span className="block text-xs text-gray-500 mt-1">
+              שים את התמונות בתיקיית public/images והשתמש בנתיב שמתחיל ב-/images/
+            </span>
+          </Label>
           <Input
-            placeholder="קישור לתמונה"
+            placeholder="/images/my-image.png"
             value={newPost.image_url}
             onChange={(e) => setNewPost({ ...newPost, image_url: e.target.value })}
-            required
           />
         </div>
         <div>
+          <Label className="block text-sm mb-2">קישור ליוטיוב (אופציונלי)</Label>
           <Input
-            placeholder="קישור ליוטיוב"
+            placeholder="https://www.youtube.com/watch?v=..."
             value={newPost.youtube_url}
             onChange={(e) => setNewPost({ ...newPost, youtube_url: e.target.value })}
-            required
           />
         </div>
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "הוסף פוסט"}
+        <Button type="submit" disabled={isLoading} className="w-full">
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              שומר...
+            </>
+          ) : (
+            'הוסף פוסט'
+          )}
         </Button>
       </form>
     </motion.div>
