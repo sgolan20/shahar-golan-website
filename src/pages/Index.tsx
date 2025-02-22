@@ -1,5 +1,7 @@
+
 import { Brain, Users, Presentation, Youtube, Target, Lightbulb, Workflow, HandshakeIcon } from "lucide-react";
 import { motion } from "framer-motion";
+
 const Index = () => {
   const features = [{
     icon: Brain,
@@ -21,38 +23,47 @@ const Index = () => {
 
   const reasons = [
     {
+      icon: Target,
       title: "הדרכה מבוססת צרכי הלקוח",
       description: "התאמה מדויקת של התכנים לעולם התוכן והצרכים הספציפיים שלכם"
     },
     {
+      icon: Users,
       title: "רזולוציה פרטנית",
       description: "התאמה אישית של קצב ורמת הלימוד לכל משתתף"
     },
     {
+      icon: Brain,
       title: "פישוט מושגים מורכבים",
       description: "הפיכת תהליכים מסובכים לשלבים ברורים וישימים"
     },
     {
+      icon: Presentation,
       title: "גישה מעשית",
       description: "התמקדות ביישומים מעשיים עם דוגמאות מעולם העסקים"
     },
     {
+      icon: HandshakeIcon,
       title: "חיבור אישי",
       description: "יצירת קשר אישי עם כל משתתף להבטחת הצלחה מקסימלית"
     },
     {
+      icon: Youtube,
       title: "הדגמות חיות",
       description: "עבודה בזמן אמת עם הכלים העדכניים ביותר"
     },
     {
+      icon: Users,
       title: "קהילה תומכת",
       description: "גישה לקהילת לומדים פעילה ותכנים מקצועיים ביוטיוב"
     },
     {
+      icon: Lightbulb,
       title: "התעדכנות מתמדת",
       description: "תכנים עדכניים המבוססים על המחקר והכלים החדשים ביותר"
     },
     {
+      icon: Workflow,
       title: "מומחיות בשילוב AI",
       description: "ידע מעשי בהטמעת AI בתהליכי עבודה קיימים"
     }
@@ -148,7 +159,10 @@ const Index = () => {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100"
               >
-                <h3 className="text-xl font-bold mb-3">{reason.title}</h3>
+                <div className="flex items-center gap-4 mb-4">
+                  <reason.icon className="w-8 h-8 text-primary" />
+                  <h3 className="text-xl font-bold">{reason.title}</h3>
+                </div>
                 <p className="text-gray-600">{reason.description}</p>
               </motion.div>
             ))}
@@ -182,4 +196,5 @@ const Index = () => {
       </section>
     </div>;
 };
+
 export default Index;
