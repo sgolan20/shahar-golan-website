@@ -60,45 +60,45 @@ const Index = () => {
 
   return <div className="min-h-screen font-heebo">
       {/* Hero Section */}
-      <section className="relative pt-32 pb-16 px-4 overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <motion.div initial={{
-            opacity: 0,
-            x: -20
-          }} animate={{
-            opacity: 1,
-            x: 0
-          }} transition={{
-            duration: 0.6
-          }} className="text-right">
-              <h1 className="text-4xl font-bold text-gray-900 mb-6 px-0 md:text-6xl">
-                בינה מלאכותית בגובה העיניים
-              </h1>
-              <p className="text-xl text-gray-600 mb-8">
-                הדרכות וסדנאות AI מותאמות אישית לארגונים וחברות, המאפשרות יישום מיידי בסביבת העבודה
-              </p>
-              <div className="flex flex-wrap justify-start gap-4">
-                <a href="/contact" className="bg-primary text-white px-8 py-3 rounded-lg hover:bg-opacity-90 transition-all">
-                  צור קשר
-                </a>
-                <a href="/services" className="bg-white text-primary border border-primary px-8 py-3 rounded-lg hover:bg-primary/5 transition-all">מה אני מציע?</a>
-              </div>
-            </motion.div>
-            <motion.div initial={{
-            opacity: 0,
-            x: 20
-          }} animate={{
-            opacity: 1,
-            x: 0
-          }} transition={{
-            duration: 0.6,
-            delay: 0.2
-          }} className="relative">
-              <img src="/animating-future.png" alt="AI Teaching Concept" className="w-full h-auto rounded-2xl shadow-xl" />
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent rounded-2xl"></div>
-            </motion.div>
-          </div>
+      <section className="relative min-h-[80vh] pt-32 pb-16 px-4 overflow-hidden">
+        {/* Background Image */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.15 }}
+          transition={{ duration: 0.8 }}
+          className="absolute inset-0 z-0"
+        >
+          <img 
+            src="/animating-future.png" 
+            alt="AI Teaching Concept" 
+            className="w-full h-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-white via-transparent to-white"></div>
+        </motion.div>
+
+        {/* Content */}
+        <div className="max-w-7xl mx-auto relative z-10">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-4xl mx-auto"
+          >
+            <h1 className="text-4xl font-bold text-gray-900 mb-6 px-0 md:text-6xl">
+              בינה מלאכותית בגובה העיניים
+            </h1>
+            <p className="text-xl text-gray-600 mb-8">
+              הדרכות וסדנאות AI מותאמות אישית לארגונים וחברות, המאפשרות יישום מיידי בסביבת העבודה
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <a href="/contact" className="bg-primary text-white px-8 py-3 rounded-lg hover:bg-opacity-90 transition-all">
+                צור קשר
+              </a>
+              <a href="/services" className="bg-white text-primary border border-primary px-8 py-3 rounded-lg hover:bg-primary/5 transition-all">
+                מה אני מציע?
+              </a>
+            </div>
+          </motion.div>
         </div>
       </section>
 
