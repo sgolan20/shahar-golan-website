@@ -25,52 +25,77 @@ const BlogAdmin = () => {
 
   useEffect(() => {
     checkUser();
-    if (isAuthenticated) {
-      fetchPosts();
-    }
-  }, [isAuthenticated]);
+  }, []);
 
   const checkUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    setIsAuthenticated(!!user);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log("Current user:", user);
+      if (user?.email === 'sgolan20@gmail.com') {
+        setIsAuthenticated(true);
+        fetchPosts();
+      } else {
+        setIsAuthenticated(false);
+      }
+    } catch (error) {
+      console.error("Error checking user:", error);
+      setIsAuthenticated(false);
+    }
   };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log("Attempting login with:", email);
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       });
+      
+      console.log("Login response:", { data, error });
+      
       if (error) throw error;
-      setIsAuthenticated(true);
+      
+      if (data.user?.email === 'sgolan20@gmail.com') {
+        setIsAuthenticated(true);
+        toast({
+          title: "התחברת בהצלחה",
+          description: "ברוך הבא למערכת ניהול"
+        });
+      } else {
+        throw new Error("אין לך הרשאות מנהל");
+      }
     } catch (error: any) {
+      console.error("Login error:", error);
       toast({
         title: "שגיאה בהתחברות",
         description: error.message,
         variant: "destructive"
       });
+      setIsAuthenticated(false);
     } finally {
       setLoading(false);
     }
   };
 
   const fetchPosts = async () => {
-    const { data, error } = await supabase
-      .from("blog_posts")
-      .select("*")
-      .order("created_at", { ascending: false });
-    
-    if (error) {
+    try {
+      const { data, error } = await supabase
+        .from("blog_posts")
+        .select("*")
+        .order("created_at", { ascending: false });
+      
+      if (error) throw error;
+      setPosts(data || []);
+    } catch (error: any) {
       toast({
         title: "שגיאה בטעינת הפוסטים",
         description: error.message,
         variant: "destructive"
       });
-      return;
     }
-    setPosts(data || []);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
