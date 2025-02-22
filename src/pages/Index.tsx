@@ -1,4 +1,4 @@
-import { Brain, Users, Presentation, Youtube } from "lucide-react";
+import { Brain, Users, Presentation, Youtube, Target, Lightbulb, Workflow, HandshakeIcon } from "lucide-react";
 import { motion } from "framer-motion";
 const Index = () => {
   const features = [{
@@ -18,6 +18,46 @@ const Index = () => {
     title: "תוכן איכותי",
     description: "גישה לתכנים מקצועיים ועדכניים"
   }];
+
+  const reasons = [
+    {
+      title: "הדרכה מבוססת צרכי הלקוח",
+      description: "התאמה מדויקת של התכנים לעולם התוכן והצרכים הספציפיים שלכם"
+    },
+    {
+      title: "רזולוציה פרטנית",
+      description: "התאמה אישית של קצב ורמת הלימוד לכל משתתף"
+    },
+    {
+      title: "פישוט מושגים מורכבים",
+      description: "הפיכת תהליכים מסובכים לשלבים ברורים וישימים"
+    },
+    {
+      title: "גישה מעשית",
+      description: "התמקדות ביישומים מעשיים עם דוגמאות מעולם העסקים"
+    },
+    {
+      title: "חיבור אישי",
+      description: "יצירת קשר אישי עם כל משתתף להבטחת הצלחה מקסימלית"
+    },
+    {
+      title: "הדגמות חיות",
+      description: "עבודה בזמן אמת עם הכלים העדכניים ביותר"
+    },
+    {
+      title: "קהילה תומכת",
+      description: "גישה לקהילת לומדים פעילה ותכנים מקצועיים ביוטיוב"
+    },
+    {
+      title: "התעדכנות מתמדת",
+      description: "תכנים עדכניים המבוססים על המחקר והכלים החדשים ביותר"
+    },
+    {
+      title: "מומחיות בשילוב AI",
+      description: "ידע מעשי בהטמעת AI בתהליכי עבודה קיימים"
+    }
+  ];
+
   return <div className="min-h-screen font-heebo">
       {/* Hero Section */}
       <section className="relative pt-32 pb-16 px-4 overflow-hidden">
@@ -80,6 +120,38 @@ const Index = () => {
                 <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
                 <p className="text-gray-600">{feature.description}</p>
               </motion.div>)}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Me Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl font-bold mb-4">למה ללמוד AI איתי?</h2>
+            <p className="text-xl text-gray-600">
+              10 סיבות שהופכות את ההדרכות שלי לייחודיות ואפקטיביות
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {reasons.map((reason, index) => (
+              <motion.div
+                key={reason.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100"
+              >
+                <h3 className="text-xl font-bold mb-3">{reason.title}</h3>
+                <p className="text-gray-600">{reason.description}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
