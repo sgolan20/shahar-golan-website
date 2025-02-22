@@ -1,81 +1,28 @@
-
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
-import { LoginForm } from "@/components/auth/LoginForm";
 import { CreatePostForm } from "@/components/blog/CreatePostForm";
 import { PostsList } from "@/components/blog/PostsList";
-import { checkAuthUser, loginWithEmail } from "@/services/auth.service";
 import { fetchBlogPosts, createBlogPost, deleteBlogPost, type BlogPost } from "@/services/blog.service";
-
-const ADMIN_EMAIL = 'sgolan20@gmail.com';
 
 const BlogAdmin = () => {
   const [loading, setLoading] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    checkUser();
+    loadPosts();
   }, []);
-
-  const checkUser = async () => {
-    try {
-      const user = await checkAuthUser();
-      console.log("Current user:", user);
-      if (user?.email === ADMIN_EMAIL) {
-        setIsAuthenticated(true);
-        loadPosts();
-      } else {
-        setIsAuthenticated(false);
-      }
-    } catch (error: any) {
-      console.error("Error checking user:", error);
-      setIsAuthenticated(false);
-    }
-  };
-
-  const handleLogin = async (email: string, password: string) => {
-    setLoading(true);
-    try {
-      console.log("Attempting login with:", email);
-      const { user } = await loginWithEmail(email, password);
-      console.log("Login response:", { user });
-      
-      if (user?.email === ADMIN_EMAIL) {
-        setIsAuthenticated(true);
-        toast({
-          title: "התחברת בהצלחה",
-          description: "ברוך הבא למערכת ניהול"
-        });
-        loadPosts();
-      } else {
-        throw new Error("אין לך הרשאות מנהל");
-      }
-    } catch (error: any) {
-      console.error("Login error:", error);
-      toast({
-        title: "שגיאה בהתחברות",
-        description: error.message,
-        variant: "destructive"
-      });
-      setIsAuthenticated(false);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const loadPosts = async () => {
     try {
-      const data = await fetchBlogPosts();
-      setPosts(data || []);
-    } catch (error: any) {
+      const fetchedPosts = await fetchBlogPosts();
+      setPosts(fetchedPosts);
+    } catch (error) {
+      console.error("Error loading posts:", error);
       toast({
         title: "שגיאה בטעינת הפוסטים",
-        description: error.message,
-        variant: "destructive"
+        description: "אנא נסה שוב מאוחר יותר",
+        variant: "destructive",
       });
     }
   };
@@ -83,44 +30,39 @@ const BlogAdmin = () => {
   const handleCreatePost = async (post: Omit<BlogPost, 'id' | 'created_at'>) => {
     setLoading(true);
     try {
-      await createBlogPost(post);
+      const newPost = await createBlogPost(post);
+      setPosts((prevPosts) => [...prevPosts, newPost]);
       toast({
-        title: "הפוסט נוסף בהצלחה",
-        description: "הפוסט החדש נוסף לבלוג"
+        title: "הפוסט נוצר בהצלחה",
       });
-      loadPosts();
-    } catch (error: any) {
+    } catch (error) {
+      console.error("Error creating post:", error);
       toast({
-        title: "שגיאה בהוספת הפוסט",
-        description: error.message,
-        variant: "destructive"
+        title: "שגיאה ביצירת הפוסט",
+        description: "אנא נסה שוב מאוחר יותר",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDeletePost = async (id: string) => {
-    if (!window.confirm("האם אתה בטוח שברצונך למחוק פוסט זה?")) return;
-    
+  const handleDeletePost = async (postId: string) => {
     try {
-      await deleteBlogPost(id);
+      await deleteBlogPost(postId);
+      setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
       toast({
-        title: "הפוסט נמחק בהצלחה"
+        title: "הפוסט נמחק בהצלחה",
       });
-      loadPosts();
-    } catch (error: any) {
+    } catch (error) {
+      console.error("Error deleting post:", error);
       toast({
         title: "שגיאה במחיקת הפוסט",
-        description: error.message,
-        variant: "destructive"
+        description: "אנא נסה שוב מאוחר יותר",
+        variant: "destructive",
       });
     }
   };
-
-  if (!isAuthenticated) {
-    return <LoginForm onSubmit={handleLogin} isLoading={loading} />;
-  }
 
   return (
     <div className="min-h-screen pt-32 pb-16 px-4">

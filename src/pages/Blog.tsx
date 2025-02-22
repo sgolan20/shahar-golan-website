@@ -1,17 +1,8 @@
-
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
-
-interface BlogPost {
-  id: string;
-  title: string;
-  description: string;
-  image_url: string;
-  youtube_url: string;
-}
+import { fetchBlogPosts, type BlogPost } from "@/services/blog.service";
 
 const Blog = () => {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
@@ -22,20 +13,16 @@ const Blog = () => {
   }, []);
 
   const fetchPosts = async () => {
-    const { data, error } = await supabase
-      .from("blog_posts")
-      .select("*")
-      .order("created_at", { ascending: false });
-    
-    if (error) {
+    try {
+      const posts = await fetchBlogPosts();
+      setBlogPosts(posts || []);
+    } catch (error: any) {
       toast({
         title: "שגיאה בטעינת הפוסטים",
         description: error.message,
         variant: "destructive"
       });
-      return;
     }
-    setBlogPosts(data || []);
   };
 
   const getYouTubeEmbedUrl = (url: string) => {
@@ -49,48 +36,45 @@ const Blog = () => {
   return (
     <div className="min-h-screen pt-32 pb-16 px-4 font-heebo">
       <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <h1 className="text-4xl font-bold mb-6">בלוג</h1>
-          <div className="w-24 h-1 bg-primary mx-auto rounded-full"></div>
-        </motion.div>
-
+        <h1 className="text-4xl font-bold mb-8 text-center">הבלוג שלי</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {blogPosts.map((post, index) => (
-            <Dialog key={post.id}>
-              <DialogTrigger asChild>
-                <motion.article
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 cursor-pointer"
-                >
-                  <div className="aspect-video mb-4 overflow-hidden rounded-lg">
-                    <img
-                      src={post.image_url}
-                      alt={post.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <h2 className="text-xl font-bold mb-3">{post.title}</h2>
-                  <p className="text-gray-600 mb-4">{post.description}</p>
-                </motion.article>
-              </DialogTrigger>
-              <DialogContent className="max-w-3xl">
-                <div className="aspect-video w-full">
-                  <iframe
-                    src={getYouTubeEmbedUrl(post.youtube_url)}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full h-full rounded-lg"
-                  />
-                </div>
-              </DialogContent>
-            </Dialog>
+          {blogPosts.map((post) => (
+            <motion.div
+              key={post.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-xl shadow-sm overflow-hidden"
+            >
+              {post.image_url && (
+                <img
+                  src={post.image_url}
+                  alt={post.title}
+                  className="w-full h-48 object-cover"
+                />
+              )}
+              <div className="p-6">
+                <h2 className="text-xl font-bold mb-2">{post.title}</h2>
+                <p className="text-gray-600 mb-4">{post.description}</p>
+                {post.youtube_url && (
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <button className="text-blue-600 hover:text-blue-800">
+                        צפה בסרטון
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[800px] h-[500px]">
+                      <iframe
+                        width="100%"
+                        height="100%"
+                        src={getYouTubeEmbedUrl(post.youtube_url)}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </DialogContent>
+                  </Dialog>
+                )}
+              </div>
+            </motion.div>
           ))}
         </div>
       </div>

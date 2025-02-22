@@ -9,14 +9,13 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      blog_posts: {
+      public_blog_posts: {
         Row: {
           created_at: string
           description: string
           id: string
           image_url: string
           title: string
-          updated_at: string
           youtube_url: string
         }
         Insert: {
@@ -25,7 +24,6 @@ export type Database = {
           id?: string
           image_url: string
           title: string
-          updated_at?: string
           youtube_url: string
         }
         Update: {
@@ -34,7 +32,6 @@ export type Database = {
           id?: string
           image_url?: string
           title?: string
-          updated_at?: string
           youtube_url?: string
         }
         Relationships: []

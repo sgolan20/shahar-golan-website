@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 export interface BlogPost {
@@ -12,7 +11,7 @@ export interface BlogPost {
 
 export const fetchBlogPosts = async () => {
   const { data, error } = await supabase
-    .from("blog_posts")
+    .from("public_blog_posts")
     .select("*")
     .order("created_at", { ascending: false });
   
@@ -21,16 +20,19 @@ export const fetchBlogPosts = async () => {
 };
 
 export const createBlogPost = async (post: Omit<BlogPost, 'id' | 'created_at'>) => {
-  const { error } = await supabase
-    .from("blog_posts")
-    .insert([post]);
+  const { data, error } = await supabase
+    .from("public_blog_posts")
+    .insert([post])
+    .select()
+    .single();
   
   if (error) throw error;
+  return data;
 };
 
 export const deleteBlogPost = async (id: string) => {
   const { error } = await supabase
-    .from("blog_posts")
+    .from("public_blog_posts")
     .delete()
     .eq("id", id);
   
