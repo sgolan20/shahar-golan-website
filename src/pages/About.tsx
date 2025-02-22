@@ -1,6 +1,6 @@
 
 import { motion } from "framer-motion";
-import { Check, Users, Brain, Tool, HeartHandshake, MessageSquare } from "lucide-react";
+import { Check, Users, Brain, Wrench, HeartHandshake, MessageSquare } from "lucide-react";
 
 const About = () => {
   const features = [
@@ -15,7 +15,7 @@ const About = () => {
       description: "שילוב דוגמאות מעשיות והתנסויות חיות בזמן אמת"
     },
     {
-      icon: Tool,
+      icon: Wrench, // החלפנו את Tool ב-Wrench
       title: "כלים מתקדמים",
       description: "שימוש בכלים מתקדמים המאפשרים למידה אפקטיבית"
     },
