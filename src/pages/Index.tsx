@@ -1,6 +1,8 @@
 
-import { Brain, Users, Presentation, Youtube, Target, Lightbulb, Workflow, HandshakeIcon } from "lucide-react";
+import { Brain, Users, Presentation, Youtube, Target, Lightbulb, Workflow, HandshakeIcon, Settings } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const features = [{
@@ -95,6 +97,14 @@ const Index = () => {
             transition={{ duration: 0.6 }}
             className="text-center max-w-4xl mx-auto"
           >
+            <div className="flex justify-end mb-4">
+              <Link to="/blog/admin">
+                <Button variant="outline" size="sm" className="flex items-center gap-2">
+                  <Settings className="h-4 w-4" />
+                  ניהול בלוג
+                </Button>
+              </Link>
+            </div>
             <h1 className="text-4xl font-bold text-gray-900 mb-6 px-0 md:text-6xl">
               בינה מלאכותית בגובה העיניים
             </h1>

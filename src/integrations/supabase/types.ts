@@ -9,30 +9,81 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_users: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          password_hash: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          password_hash: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          password_hash?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       public_blog_posts: {
         Row: {
           created_at: string
           description: string
           id: string
-          image_url: string
+          image_url: string | null
           title: string
-          youtube_url: string
+          youtube_url: string | null
         }
         Insert: {
           created_at?: string
           description: string
           id?: string
-          image_url: string
+          image_url?: string | null
           title: string
-          youtube_url: string
+          youtube_url?: string | null
         }
         Update: {
           created_at?: string
           description?: string
           id?: string
-          image_url?: string
+          image_url?: string | null
           title?: string
-          youtube_url?: string
+          youtube_url?: string | null
+        }
+        Relationships: []
+      }
+      users: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          password: string
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          password: string
+          role?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          password?: string
+          role?: string
+          updated_at?: string
         }
         Relationships: []
       }
