@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
@@ -82,7 +83,7 @@ const BlogAdmin = () => {
       
       <div className="mt-8">
         <h2 className="text-2xl font-semibold mb-4">רשימת פוסטים</h2>
-        <PostsList posts={posts} onDelete={handleDeletePost} isAdmin={true} />
+        <PostsList posts={posts} onDelete={handleDeletePost} />
       </div>
     </div>
   );
