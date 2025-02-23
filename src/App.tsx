@@ -1,44 +1,64 @@
 
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import Index from "./pages/Index";
-import About from "./pages/About";
-import Blog from "./pages/Blog";
-import BlogAdmin from "./pages/BlogAdmin";
-import Services from "./pages/Services";
-import Contact from "./pages/Contact";
-import NotFound from "./pages/NotFound";
-import Navbar from "./components/Navbar";
+import { AuthProvider, useAuth } from "@/components/auth/AuthProvider";
+import Navbar from "@/components/Navbar";
+import Index from "@/pages/Index";
+import About from "@/pages/About";
+import Services from "@/pages/Services";
+import Contact from "@/pages/Contact";
+import Blog from "@/pages/Blog";
+import BlogAdmin from "@/pages/BlogAdmin";
+import LoginPage from "@/pages/LoginPage";
+import NotFound from "@/pages/NotFound";
+import "./App.css";
 
-const queryClient = new QueryClient();
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { session, isLoading } = useAuth();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <div className="min-h-screen bg-white" dir="rtl">
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!session) {
+    return <Navigate to="/login" />;
+  }
+
+  if (session.user.email !== 'sgolan20@gmail.com') {
+    return <Navigate to="/" />;
+  }
+
+  return <>{children}</>;
+};
+
+function App() {
+  return (
+    <Router>
+      <AuthProvider>
+        <div className="min-h-screen">
           <Navbar />
-          <AnimatePresence mode="wait">
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/admin" element={<BlogAdmin />} />
-              <Route path="/services" element={<Services />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </AnimatePresence>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/blog/admin"
+              element={
+                <ProtectedRoute>
+                  <BlogAdmin />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          <Toaster />
         </div>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+      </AuthProvider>
+    </Router>
+  );
+}
 
 export default App;
