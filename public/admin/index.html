@@ -58,129 +58,159 @@
             margin-bottom: 1rem;
             border-radius: 4px;
         }
+        #jsonOutput {
+            width: 100%;
+            height: 200px;
+            margin-top: 20px;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: monospace;
+        }
+        .copy-btn {
+            margin-top: 10px;
+        }
+        #loginForm {
+            margin-bottom: 20px;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="admin-container">
-        <h1>ניהול בלוג</h1>
-        
-        <form id="blogForm" onsubmit="handleSubmit(event)">
+        <div id="loginForm">
+            <h2>התחברות</h2>
             <div class="form-group">
-                <label for="title">כותרת</label>
-                <input type="text" id="title" required>
+                <label for="email">אימייל</label>
+                <input type="email" id="email" value="">
             </div>
-            
             <div class="form-group">
-                <label for="description">תיאור</label>
-                <textarea id="description" rows="4" required></textarea>
+                <label for="password">סיסמה</label>
+                <input type="password" id="password" value="">
             </div>
+            <button onclick="login()" class="btn">התחבר</button>
+        </div>
+
+        <div id="adminPanel" class="hidden">
+            <h1>ניהול בלוג</h1>
             
-            <div class="form-group">
-                <label for="imageUrl">קישור לתמונה</label>
-                <input type="url" id="imageUrl">
-            </div>
+            <form id="blogForm" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label for="title">כותרת</label>
+                    <input type="text" id="title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">תיאור</label>
+                    <textarea id="description" rows="4" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="imageUrl">קישור לתמונה</label>
+                    <input type="url" id="imageUrl">
+                </div>
+                
+                <div class="form-group">
+                    <label for="youtubeUrl">קישור ליוטיוב</label>
+                    <input type="url" id="youtubeUrl">
+                </div>
+                
+                <button type="submit" class="btn">הוסף פוסט</button>
+            </form>
             
-            <div class="form-group">
-                <label for="youtubeUrl">קישור ליוטיוב</label>
-                <input type="url" id="youtubeUrl">
-            </div>
+            <div class="posts-list" id="postsList"></div>
             
-            <button type="submit" class="btn">פרסם פוסט</button>
-        </form>
-        
-        <div class="posts-list" id="postsList"></div>
+            <h3>JSON לעדכון</h3>
+            <p>העתק את ה-JSON הזה ועדכן את הקובץ blog-posts.json בתיקיית data:</p>
+            <textarea id="jsonOutput" readonly></textarea>
+            <button onclick="copyToClipboard()" class="btn copy-btn">העתק JSON</button>
+        </div>
     </div>
 
     <script>
-        // פונקציה לשליחת הפוסט לסופאבייס
-        async function handleSubmit(event) {
+        let posts = [];
+        const ADMIN_EMAIL = "sgolan20@gmail.com";
+        const ADMIN_PASSWORD = "Golansha12#";
+
+        function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('adminPanel').classList.remove('hidden');
+                loadPosts();
+            } else {
+                alert('פרטי התחברות שגויים');
+            }
+        }
+
+        function handleSubmit(event) {
             event.preventDefault();
             
-            const postData = {
+            const newPost = {
+                id: Date.now(),
                 title: document.getElementById('title').value,
                 description: document.getElementById('description').value,
                 image_url: document.getElementById('imageUrl').value,
-                youtube_url: document.getElementById('youtubeUrl').value
+                youtube_url: document.getElementById('youtubeUrl').value,
+                date: new Date().toISOString()
             };
 
-            try {
-                const response = await fetch('https://[YOUR-SUPABASE-PROJECT].supabase.co/rest/v1/public_blog_posts', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': '[YOUR-SUPABASE-API-KEY]',
-                        'Authorization': 'Bearer [YOUR-SUPABASE-API-KEY]'
-                    },
-                    body: JSON.stringify(postData)
-                });
-
-                if (response.ok) {
-                    alert('הפוסט נוצר בהצלחה!');
-                    document.getElementById('blogForm').reset();
-                    loadPosts();
-                } else {
-                    throw new Error('שגיאה ביצירת הפוסט');
-                }
-            } catch (error) {
-                alert('שגיאה: ' + error.message);
-            }
+            posts.push(newPost);
+            document.getElementById('blogForm').reset();
+            updateDisplay();
         }
 
-        // פונקציה לטעינת הפוסטים
-        async function loadPosts() {
-            try {
-                const response = await fetch('https://[YOUR-SUPABASE-PROJECT].supabase.co/rest/v1/public_blog_posts?select=*', {
-                    headers: {
-                        'apikey': '[YOUR-SUPABASE-API-KEY]',
-                        'Authorization': 'Bearer [YOUR-SUPABASE-API-KEY]'
-                    }
-                });
-
-                const posts = await response.json();
-                const postsListElement = document.getElementById('postsList');
-                postsListElement.innerHTML = '';
-
-                posts.forEach(post => {
-                    const postElement = document.createElement('div');
-                    postElement.className = 'post-item';
-                    postElement.innerHTML = `
-                        <h3>${post.title}</h3>
-                        <p>${post.description}</p>
-                        <button onclick="deletePost('${post.id}')" class="btn">מחק</button>
-                    `;
-                    postsListElement.appendChild(postElement);
-                });
-            } catch (error) {
-                console.error('שגיאה בטעינת הפוסטים:', error);
-            }
+        function deletePost(postId) {
+            posts = posts.filter(post => post.id !== postId);
+            updateDisplay();
         }
 
-        // פונקציה למחיקת פוסט
-        async function deletePost(postId) {
-            if (!confirm('האם אתה בטוח שברצונך למחוק פוסט זה?')) return;
+        function updateDisplay() {
+            // עדכון רשימת הפוסטים
+            const postsListElement = document.getElementById('postsList');
+            postsListElement.innerHTML = '';
+            
+            posts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.className = 'post-item';
+                postElement.innerHTML = `
+                    <h3>${post.title}</h3>
+                    <p>${post.description}</p>
+                    <button onclick="deletePost(${post.id})" class="btn">מחק</button>
+                `;
+                postsListElement.appendChild(postElement);
+            });
 
-            try {
-                const response = await fetch(`https://[YOUR-SUPABASE-PROJECT].supabase.co/rest/v1/public_blog_posts?id=eq.${postId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'apikey': '[YOUR-SUPABASE-API-KEY]',
-                        'Authorization': 'Bearer [YOUR-SUPABASE-API-KEY]'
-                    }
-                });
-
-                if (response.ok) {
-                    alert('הפוסט נמחק בהצלחה!');
-                    loadPosts();
-                } else {
-                    throw new Error('שגיאה במחיקת הפוסט');
-                }
-            } catch (error) {
-                alert('שגיאה: ' + error.message);
-            }
+            // עדכון ה-JSON
+            document.getElementById('jsonOutput').value = JSON.stringify(posts, null, 2);
         }
 
-        // טעינת הפוסטים בעת טעינת הדף
-        document.addEventListener('DOMContentLoaded', loadPosts);
+        function copyToClipboard() {
+            const jsonOutput = document.getElementById('jsonOutput');
+            jsonOutput.select();
+            document.execCommand('copy');
+            alert('ה-JSON הועתק ללוח');
+        }
+
+        // טעינת פוסטים קיימים בעת טעינת הדף
+        function loadPosts() {
+            fetch('../data/blog-posts.json')
+                .then(response => response.json())
+                .then(data => {
+                    posts = data;
+                    updateDisplay();
+                })
+                .catch(() => {
+                    console.log('אין פוסטים קיימים או שגיאה בטעינה');
+                    posts = [];
+                    updateDisplay();
+                });
+        }
     </script>
 </body>
 </html>
